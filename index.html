@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Leaflet avec GeoJSON</title>
+    <!-- Inclusion de la bibliothèque Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 100vh; /* La carte occupe toute la hauteur de la fenêtre */
+        }
+    </style>
+	
+	<script src="scripts/layerStyle.js" defer></script>
+	<script src="scripts/script.js" defer></script>
+	<script src="scripts/main.js" defer></script>
+	<!-- chargement des couches -->
+	<script src="data/world_boundaries.geojson"></script>
+</head>
+<body>
+    <!-- Conteneur pour la carte -->
+    <div id="map"></div>
+
+</body>
+</html>

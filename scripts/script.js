@@ -31,8 +31,8 @@ let LayerCountry = webmap.layer1
 let valeurs = webmap.listValues
 
 
-//Gestion des événements sur les Country
-                let SurChaqueCountry=function(feature,layer){
+//Gestion des événements sur les entités
+                let SurChaqueEntite=function(feature,layer){
 					
 					layer.on('mouseover',function(){
                         this.setStyle(styleCountrySurPassage());
@@ -63,7 +63,7 @@ let valeurs = webmap.listValues
 // Ajouter onEachFeature dynamiquement
 LayerCountry.eachLayer(function(layer) {
     if (layer.feature) { // Vérifier que la couche a une propriété 'feature'
-        SurChaqueCountry(layer.feature, layer);
+        SurChaqueEntite(layer.feature, layer);
     }
 });
 

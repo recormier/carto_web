@@ -1,63 +1,79 @@
-function genererCarte() {
-            var zoom=function(){
-                map.fitBounds(LayerDepartement.getBounds())
-            }
+let userProposition =""
+console.log(userProposition)
+let proposition = "France"
+let correspondance = ''
+let score=0
+let i=0
+let nb_round=5
+
+
+function afficherProposition(element) {
+	let zoneProposition = document.getElementById("zoneProposition")
+	proposition=element
+	zoneProposition.innerText = proposition
+	}
+
+function genererProposition(listeValues) {
+	let indexAleatoire = Math.floor(Math.random() * listeValues.length); // Génère un index aléatoire
+    let element = listeValues[indexAleatoire];
+	afficherProposition(element)
+}
+
+function lancerJeu() {
+            //let zoom=function(){
+            //    map.fitBounds(LayerDepartement.getBounds())
+            //}
             
 //Initialisation de la carte
-            var map= L.map('map',{
-                            center: [48.8739,6.20093],
-                            zoom :7
-                        });
-
-            
-            var baseLayers={
-                    osm:L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png'),
-                    osmfr:L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png'),
-                    ocsge:L.tileLayer.wms('https://www.geograndest.fr/geoserver/geograndest/wms',                                                               {layers:'geograndest:ocsge2_d54_2019'}),
-                    OpenTopoMap:L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'),
-                    EsriWorldImagery:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
-                    };
-
-//Chargement de la couche OSM
-            baseLayers.osm.addTo(map);
-            
-            
-//Ajout controle
-            L.control.scale().addTo(map);               // contrôle d'échelle
-            L.control.layers(baseLayers).addTo(map);    // contrôle de couche
+let webmap = initMap()
+let map = webmap.webmap
+let LayerCountry = webmap.layer1
+let valeurs = webmap.listValues
 
 
 //Gestion des événements sur les Country
-                var SurChaqueCountry=function(feature,layer){
-                    layer.bindPopup("<img class='logos' alt='logo' width=50 src=img/"+ 
-                                    nom_logo_defaut             //feature.properties.CODE_SIREN
-                                    +".png/>"+"<span class=lien>"+(feature.properties.french_short).link(site+feature.properties.french_short)+"</span>",optionsPopup);
-                         
-                    layer.on('mouseover',function(){
+                let SurChaqueCountry=function(feature,layer){
+					
+					layer.on('mouseover',function(){
                         this.setStyle(styleCountrySurPassage());
                     });
-                     layer.on('mouseout',function(){
+                    layer.on('mouseout',function(){
                         this.setStyle(styleCountryInit());
                     });
-                }
-                
-                
-                var site='https://fr.wikipedia.org/wiki/'
-                var optionsPopup =
-                    {
-                    'className' : 'custom'
-                    }
-                var nom_logo_defaut = 'grand_est'
+					
+					
+					// Ajouter un événement click
+					layer.on('click', function() {
+						// Attribuer une valeur à une variable
+						userProposition = feature.properties.french_short; // Exemple d'attribution
+						if (userProposition === proposition) {
+							correspondance = 'Bravo';
+							score++
+							} else {
+							correspondance = 'Faux'
+							}
+						i++
+						console.log(score)
+						genererProposition(valeurs)
+						
+					if (i>=nb_round ||  valeurs[i] === undefined) {afficherProposition('le jeu est fini')}
+					});
+				};
+				
+// Ajouter onEachFeature dynamiquement
+LayerCountry.eachLayer(function(layer) {
+    if (layer.feature) { // Vérifier que la couche a une propriété 'feature'
+        SurChaqueCountry(layer.feature, layer);
+    }
+});
 
 //DEFINITION DES COUCHES
-            
-    //Définition de la couche Country
-            var LayerCountry=L.geoJSON(country,{
-                style:styleCountryInit,
-                onEachFeature:SurChaqueCountry,
-                });
-            LayerCountry.addTo(map);
 
+    
+			
+	genererProposition(valeurs)
+	console.log("Élément aléatoire :", proposition);
+	
     //ajustement du zoom de la carte sur les couches
             map.fitBounds(LayerCountry.getBounds())
 }

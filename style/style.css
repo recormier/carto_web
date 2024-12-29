@@ -112,6 +112,7 @@ main {
     justify-content: space-between;
     align-items: center;
     width: 50%;
+	min-height:600px;
     min-width: 200px;
     margin-bottom: 50px;
     padding: 50px;
@@ -170,7 +171,8 @@ footer {
     align-items: center;
     justify-content: center;
 	width: 100%;
-	height: 100%;
+	height:300px;
+	min-height: 300px;
 }
 
 
@@ -180,6 +182,7 @@ footer {
     justify-content: space-between;
     width: 100%;
     margin-bottom: 30px;
+	z-index: -1;
 }
 
 /* Eléments du formulaire de saisie */
@@ -195,7 +198,7 @@ footer {
     font-size: 20px;
 }
 
-.zonePartage {
+.btnRecommencer {
     padding-top: 20px;
 }
 
@@ -209,6 +212,7 @@ footer {
     height: 100vh;
     width: 100vw;
     background-color: rgba(255, 255, 255, 0.5);
+	z-index: 1000;
 }
 
 .popup {

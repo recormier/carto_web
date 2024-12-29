@@ -18,24 +18,29 @@
 	
 	<script src="scripts/layerStyle.js" defer></script>
 	<script src="scripts/baseLayers.js" defer></script>
+	<script src="scripts/popup.js" defer></script>
 	<script src="scripts/webmap.js" defer></script>
 	<script src="scripts/script.js" defer></script>
 	<script src="scripts/main.js" defer></script>
 	<!-- chargement des couches -->
-	<script src="data/world_boundaries.geojson"></script>
+	<script src="data/world_boundaries2.geojson"></script>
+	<script src="data/cacp_communes.geojson"></script>
 </head>
 <body>
-
-
+    <!-- HEADER -->
+    <header>
+        <h1>GEO</h1>
+        <h2>Quiz carto</h2>
+    </header>
     <!-- MAIN -->
     <main>
         <div class="zoneOptions">
             <p>Choisissez votre option et tapez la proposition qui s'affiche dans le champ en-dessous.</p>
             <div class="optionSource">
                 <input type="radio" name="optionSource" id="mots" value="1" checked>
-                <label for="mots">Mots</label>
+                <label for="mots">Pays du monde</label>
                 <input type="radio" name="optionSource" id="phrases" value="2">
-                <label for="phrases">Phrases</label>
+                <label for="phrases">Communes de la CACP</label>
             </div>
         </div>
 		
@@ -44,30 +49,29 @@
         </div>
 		<!-- Conteneur pour la carte -->
 		<div id="map"> 
-			</br>a
-			</br>a
-			</br>a
-			</br>a
-			</br>a
-			</br>a
-			</br>a
-			</br>a
-			</br>a
-			</br>a
-			</br>a
-			</br>a
-			</br>a
-			</br>a
-			</br>a
+
 		</div>		
         <div class="zoneScore">
             Votre score : <span>0</span>
         </div>
 
-        <div class="zonePartage">
-            <button>Partager</button>
+        <div class="btnRecommencer">
+            <button>Recommencer</button>
         </div>
 	</main>
+
+    <!-- Popup de partage -->
+    <div class="popupBackground">
+        <div class="popup">
+            <div> La partie est <br> terminée ! </div>
+			<div class="zoneScore">
+				Votre score : <span>0</span>
+			</div>
+			<div class="btnRecommencer">
+				<button>Recommencer</button>
+			</div>
+        </div>
+    </div>
 
 
 </body>

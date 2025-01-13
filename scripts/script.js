@@ -1,63 +1,168 @@
-function genererCarte() {
-            var zoom=function(){
-                map.fitBounds(LayerDepartement.getBounds())
-            }
+
+function afficherProposition(element) {
+	let zoneProposition = document.getElementById("zoneProposition")
+	zoneProposition.innerText = element
+	}
+
+function genererProposition(listeValues) {
+	let indexAleatoire = Math.floor(Math.random() * listeValues.length); // Génère un index aléatoire
+    let element = listeValues[indexAleatoire];
+	afficherProposition(element)
+	return element
+}
+
+function afficherResultat(score, nbPropositions) {
+    // Récupération de la zone dans laquelle on va écrire le score
+    let spanScore = document.querySelectorAll(".zoneScore span")
+    // Ecriture du texte
+    let affichageScore = `${score} / ${nbPropositions}` 
+    // On place le texte à l'intérieur du span. 
+    spanScore.innerText = affichageScore
+	for (let index = 0; index < spanScore.length; index++) {
+		spanScore[index].innerText = affichageScore;
+	}
+}
+
+// Fonction pour afficher une div temporairement
+function afficherDivTemporaire(contenu, color) {
+    // Sélectionner ou créer la div
+    let divTemporaire = document.getElementById("info-div");
+    if (!divTemporaire) {
+        divTemporaire = document.createElement("div");
+        divTemporaire.id = "info-div";
+        divTemporaire.style.position = "absolute";
+        divTemporaire.style.bottom = "10px";
+        divTemporaire.style.left = "50%";
+		divTemporaire.style.transform = "translate(-50%, 0)";
+        divTemporaire.style.padding = "10px";
+        divTemporaire.style.color = "white";
+        divTemporaire.style.borderRadius = "5px";
+        divTemporaire.style.zIndex = "1000";
+        // Ajouter la div temporaire à l'intérieur de la div parent (carte)
+        const parentDiv = document.getElementById("map"); // ID de votre conteneur carte
+        parentDiv.appendChild(divTemporaire);
+    }
+
+    // Modifier le contenu de la div
+    divTemporaire.innerHTML = "<b>Guess :</b> " + contenu;
+	divTemporaire.style.backgroundColor = color;
+    // Afficher la div
+    divTemporaire.style.display = "block";
+
+    // Masquer la div après 5 secondes
+    setTimeout(function () {
+        divTemporaire.style.display = "none";
+    }, 5000);
+}
+
+// Gestion de l'événement change sur les boutons radios. 
+let listeBtnRadio = document.querySelectorAll(".optionSource input")
+let layerToLoad = ''
+if (listeBtnRadio[0].checked === true){
+	console.log("eee")
+	console.log(listeBtnRadio[0].value)
+	layerToLoad = country
+} else {
+	layerToLoad = cacp_communes
+}
+for (let index = 0; index < listeBtnRadio.length; index++) {
+    listeBtnRadio[index].addEventListener("change", (event) => {
+        // Si c'est le premier élément qui a été modifié, alors nous voulons
+        // jouer avec la listeMots. 
+        if (event.target.value === "1") {
+            layerToLoad = country
+			lancerJeu(layerToLoad)
+        } else {
+            // Sinon nous voulons jouer avec la liste des phrases
+            layerToLoad = cacp_communes
+			lancerJeu(layerToLoad)
+        }
+    })
+}
+
+
+function lancerJeu(layerToLoad) {
+initAddEventListenerPopup()
+
+let userProposition =""
+console.log(userProposition)
+
+let correspondance = ''
+let score=0
+let i=0
+let nb_round=5
+afficherResultat('-', '-')
             
 //Initialisation de la carte
-            var map= L.map('map',{
-                            center: [48.8739,6.20093],
-                            zoom :7
-                        });
-
-            
-            var baseLayers={
-                    osm:L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png'),
-                    osmfr:L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png'),
-                    ocsge:L.tileLayer.wms('https://www.geograndest.fr/geoserver/geograndest/wms',                                                               {layers:'geograndest:ocsge2_d54_2019'}),
-                    OpenTopoMap:L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'),
-                    EsriWorldImagery:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
-                    };
-
-//Chargement de la couche OSM
-            baseLayers.osm.addTo(map);
-            
-            
-//Ajout controle
-            L.control.scale().addTo(map);               // contrôle d'échelle
-            L.control.layers(baseLayers).addTo(map);    // contrôle de couche
+let webmap = initMap(layerToLoad)
+let map = webmap.webmap
+let LayerCountry = webmap.layer1
+let valeurs = webmap.listValues
+let proposition = genererProposition(valeurs)
+console.log("Élément aléatoire :", proposition);
 
 
-//Gestion des événements sur les Country
-                var SurChaqueCountry=function(feature,layer){
-                    layer.bindPopup("<img class='logos' alt='logo' width=50 src=img/"+ 
-                                    nom_logo_defaut             //feature.properties.CODE_SIREN
-                                    +".png/>"+"<span class=lien>"+(feature.properties.french_short).link(site+feature.properties.french_short)+"</span>",optionsPopup);
-                         
-                    layer.on('mouseover',function(){
-                        this.setStyle(styleCountrySurPassage());
-                    });
-                     layer.on('mouseout',function(){
-                        this.setStyle(styleCountryInit());
-                    });
-                }
-                
-                
-                var site='https://fr.wikipedia.org/wiki/'
-                var optionsPopup =
-                    {
-                    'className' : 'custom'
-                    }
-                var nom_logo_defaut = 'grand_est'
 
-//DEFINITION DES COUCHES
-            
-    //Définition de la couche Country
-            var LayerCountry=L.geoJSON(country,{
-                style:styleCountryInit,
-                onEachFeature:SurChaqueCountry,
+
+//Gestion des événements sur les entités
+            let SurChaqueEntite=function(feature,layer){
+	layer.on('mouseover',function(){
+                    this.setStyle(styleCountrySurPassage());
                 });
-            LayerCountry.addTo(map);
+                layer.on('mouseout',function(){
+                    this.setStyle(styleCountryInit());
+                });
+	// Ajouter un événement click
+	layer.on('click', function() {
+		if (i>=nb_round ||  valeurs[i] === undefined) {
+			afficherProposition('le jeu est fini');
+			// Gérer l'affichage de la div lors d'un clic
+			afficherDivTemporaire(feature.properties.name, "#555555");
+			}
+		else {
+									// Attribuer une valeur à une variable
+		userProposition = feature.properties.name; // Exemple d'attribution
+		if (userProposition === proposition) {
+			correspondance = 'Bravo';
+			score++
+			// Gérer l'affichage de la div lors d'un clic
+			afficherDivTemporaire(feature.properties.name, "#55AA55");
+			} else {
+			correspondance = 'Faux'
+			// Gérer l'affichage de la div lors d'un clic
+			afficherDivTemporaire(feature.properties.name, "#AA5555");
+			}
+		console.log(correspondance)
+		i++
+		proposition = genererProposition(valeurs)
+		if (i>=nb_round ||  valeurs[i] === undefined) {
+			afficherProposition('le jeu est fini');
+			afficherPopup()
+			}
+		afficherResultat(score, i)
+		}
+		}
+		);
+	};
+					
+	// Ajouter onEachFeature dynamiquement
+	LayerCountry.eachLayer(function(layer) {
+		if (layer.feature) { // Vérifier que la couche a une propriété 'feature'
+			SurChaqueEntite(layer.feature, layer);
+		}
+	});
 
     //ajustement du zoom de la carte sur les couches
             map.fitBounds(LayerCountry.getBounds())
 }
+
+let btnRecommencer = document.querySelectorAll(".btnRecommencer")
+// Gestion de l'événement click sur les boutons "recommencer"
+btnRecommencer.forEach(btn => {
+	btn.addEventListener("click", () => {
+        lancerJeu(layerToLoad)
+		cacherPopup()
+    })
+});
+
+

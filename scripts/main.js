@@ -1,1 +1,1 @@
-genererCarte()
+lancerJeu(layerToLoad)
